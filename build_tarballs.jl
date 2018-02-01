@@ -27,7 +27,6 @@ sources = [
 ]
 
 script = raw"""
-echo $target
 cd $WORKSPACE/srcdir
 cd erfa-1.4.0/
 if [[ ${target} == i686-w64* ]] || [[ ${target} == x86_64-w64* ]]; then
