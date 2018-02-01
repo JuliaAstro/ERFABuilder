@@ -3,13 +3,13 @@ using BinaryBuilder
 # These are the platforms built inside the wizard
 platforms = [
     BinaryProvider.Linux(:i686, :glibc),
-  BinaryProvider.Linux(:x86_64, :glibc),
-  BinaryProvider.Linux(:aarch64, :glibc),
-  BinaryProvider.Linux(:armv7l, :glibc),
-  BinaryProvider.Linux(:powerpc64le, :glibc),
-  BinaryProvider.MacOS(),
-  BinaryProvider.Windows(:i686),
-  BinaryProvider.Windows(:x86_64)
+    BinaryProvider.Linux(:x86_64, :glibc),
+    BinaryProvider.Linux(:aarch64, :glibc),
+    BinaryProvider.Linux(:armv7l, :glibc),
+    BinaryProvider.Linux(:powerpc64le, :glibc),
+    BinaryProvider.MacOS(),
+    BinaryProvider.Windows(:i686),
+    BinaryProvider.Windows(:x86_64)
 ]
 
 
@@ -29,9 +29,11 @@ sources = [
 script = raw"""
 cd $WORKSPACE/srcdir
 cd erfa-1.4.0/
-sed -i "s/LT_INIT/LT_INIT([win32-dll])/" configure.ac
-sed -i "s/liberfa_la_LDFLAGS = -version-info $(VI_ALL)/liberfa_la_LDFLAGS = -no-undefined -version-info $(VI_ALL)/" src/Makefile.am
-autoreconf -fi
+if [[ ${target} == i686-w64* ]] || [[ ${target} == x86_64-w64* ]]; then
+    sed -i "s/LT_INIT/LT_INIT([win32-dll])/" configure.ac
+    sed -i "s/liberfa_la_LDFLAGS = -version-info $(VI_ALL)/liberfa_la_LDFLAGS = -no-undefined -version-info $(VI_ALL)/" src/Makefile.am
+    autoreconf -fi
+fi
 ./configure --prefix=/ --host=$target
 make
 make install
