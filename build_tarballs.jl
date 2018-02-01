@@ -46,5 +46,5 @@ products = prefix -> [
 
 
 # Build the given platforms using the given sources
-hashes = autobuild(pwd(), "ERFABuilder", platforms, sources, script, products)
+hashes = autobuild(pwd(), "liberfa", platforms, sources, script, products)
 
