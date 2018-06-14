@@ -1,25 +1,5 @@
 using BinaryBuilder
 
-# These are the platforms built inside the wizard
-platforms = [
-    BinaryProvider.Linux(:i686, :glibc),
-    BinaryProvider.Linux(:x86_64, :glibc),
-    BinaryProvider.Linux(:aarch64, :glibc),
-    BinaryProvider.Linux(:armv7l, :glibc),
-    BinaryProvider.Linux(:powerpc64le, :glibc),
-    BinaryProvider.MacOS(),
-    BinaryProvider.Windows(:i686),
-    BinaryProvider.Windows(:x86_64)
-]
-
-
-# If the user passed in a platform (or a few, comma-separated) on the
-# command-line, use that instead of our default platforms
-if length(ARGS) > 0
-    platforms = platform_key.(split(ARGS[1], ","))
-end
-info("Building for $(join(triplet.(platforms), ", "))")
-
 # Collection of sources required to build ERFABuilder
 sources = [
     "https://github.com/liberfa/erfa/releases/download/v1.4.0/erfa-1.4.0.tar.gz" =>
@@ -37,14 +17,17 @@ fi
 ./configure --prefix=/ --host=$target
 make
 make install
-
 """
 
+# Build on all default platforms
+platforms = supported_platforms()
+
+# No dependencies
+dependencies = []
+
 products = prefix -> [
-    LibraryProduct(prefix,"liberfa")
+    LibraryProduct(prefix, "liberfa", :liberfa)
 ]
 
-
-# Build the given platforms using the given sources
-hashes = autobuild(pwd(), "liberfa", platforms, sources, script, products)
-
+# Build the tarballs, and possibly a `build.jl` as well.
+build_tarballs(ARGS, "liberfa", sources, script, platforms, products, dependencies)
