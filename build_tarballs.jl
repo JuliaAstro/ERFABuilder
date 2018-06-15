@@ -12,10 +12,10 @@ cd erfa-1.4.0/
 if [[ ${target} == i686-w64* ]] || [[ ${target} == x86_64-w64* ]]; then
     sed -i 's/LT_INIT/LT_INIT([win32-dll])/' configure.ac
     sed -i 's/liberfa_la_LDFLAGS = -version-info \$(VI_ALL)/liberfa_la_LDFLAGS = -no-undefined -version-info $(VI_ALL)/' src/Makefile.am
-    autoreconf -fi
 fi
-./configure --prefix=/ --host=$target
-make
+autoreconf -fi
+./configure --prefix=$prefix --host=$target
+make -j${nproc}
 make install
 """
 
